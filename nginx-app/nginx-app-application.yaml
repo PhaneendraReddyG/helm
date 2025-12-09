@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nginx-app
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/PhaneendraReddyG/helm
+    chart: nginx-app
+    targetRevision: "0.1.0"    # Chart version (nginx-app-0.1.0.tgz)
+
+    helm:
+      releaseName: nginx-app
+      values: |
+        replicaCount: 2
+        service:
+          type: ClusterIP
+        image:
+          repository: nginx
+          tag: "1.25.0"
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: nginx-helm
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
