@@ -7,9 +7,9 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/PhaneendraReddyG/helm.git
-    path: nginx-app    
-    targetRevision: main
+    repoURL: https://phaneendrareddyg.github.io/helm
+    chart: nginx-app    
+    targetRevision: "0.3.0"
         
     helm:
       releaseName: nginx-app
@@ -18,8 +18,8 @@ spec:
         service:
           type: ClusterIP
         image:
-          repository: httpd
-          tag: "1.25.0"
+          repository: nginx
+          tag: 1.25.0
 
   destination:
     server: https://kubernetes.default.svc
