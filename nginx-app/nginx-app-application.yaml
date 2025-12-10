@@ -7,10 +7,10 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/PhaneendraReddyG/helm
-    chart: nginx-app
-    targetRevision: "0.2.0"    # Chart version (nginx-app-0.1.0.tgz)
-
+    repoURL: https://github.com/PhaneendraReddyG/helm.git
+    path: nginx-app    
+    targetRevision: main
+        
     helm:
       releaseName: nginx-app
       values: |
@@ -18,7 +18,7 @@ spec:
         service:
           type: ClusterIP
         image:
-          repository: nginx
+          repository: httpd
           tag: "1.25.0"
 
   destination:
