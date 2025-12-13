@@ -2,8 +2,18 @@ apiVersion: v1
 entries:
   nginx-app:
   - apiVersion: v2
+    appVersion: 1.29.4
+    created: "2025-12-13T04:25:11.846453585Z"
+    description: A Helm chart for Kubernetes
+    digest: 661785bf763779c85328010d2c4b5aade4c4495fc594b940edea2220fcffba23
+    name: nginx-app
+    type: application
+    urls:
+    - https://phaneendrareddyg.github.io/helm/nginx-app-1.29.4.tgz
+    version: 1.29.4
+  - apiVersion: v2
     appVersion: 0.3.0
-    created: "2025-12-10T07:11:00.498876634Z"
+    created: "2025-12-13T04:25:11.846026136Z"
     description: A Helm chart for Kubernetes
     digest: f380185c798c61c8ea168589c19cd74dde59108b5d5abe0bb8de15c83b38c859
     name: nginx-app
@@ -13,7 +23,7 @@ entries:
     version: 0.3.0
   - apiVersion: v2
     appVersion: 0.2.0
-    created: "2025-12-10T07:11:00.498489578Z"
+    created: "2025-12-13T04:25:11.845466211Z"
     description: A Helm chart for Kubernetes
     digest: ea62d62985556c45286d722e3953884d67cf28a94a81153fe28c80765d15e991
     name: nginx-app
@@ -23,7 +33,7 @@ entries:
     version: 0.2.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-12-10T07:11:00.496286488Z"
+    created: "2025-12-13T04:25:11.844887289Z"
     description: A Helm chart for Kubernetes
     digest: faf0a59b286c9c920059c3f311369a2a3e76c45f9d1ed3a198d9e94c1df6dbd5
     name: nginx-app
@@ -31,4 +41,4 @@ entries:
     urls:
     - https://phaneendrareddyg.github.io/helm/nginx-app-0.1.0.tgz
     version: 0.1.0
-generated: "2025-12-10T07:11:00.495801309Z"
+generated: "2025-12-13T04:25:11.83884871Z"
