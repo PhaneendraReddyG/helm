@@ -1,8 +1,7 @@
 
 # **Helm Repository via GitHub Pages – Setup & Update Guide**
 
-This repository contains Helm charts hosted using **GitHub Pages**.
-Follow this guide to build, package, index, publish, and update chart versions.
+This repository contains Helm charts published via **GitHub Pages** using the `docs/` folder. Follow this guide to build, package, index, publish, and update chart versions.
 
 ---
 
@@ -10,140 +9,126 @@ Follow this guide to build, package, index, publish, and update chart versions.
 
 ```
 helm/
+ ├── docs/
+ │    ├── index.yaml
+ │    ├── nginx-app-0.1.0.tgz
+ │    └── nginx-app-0.2.0.tgz
  ├── nginx-app/
  │    ├── Chart.yaml
  │    ├── values.yaml
- │    ├── templates/
- ├── index.yaml       ← auto-generated
- ├── nginx-app-0.1.0.tgz
- ├── nginx-app-0.2.0.tgz
- └── README.md
+ │    └── templates/
+ └── readme.md
 ```
 
 ---
 
-## **📌 2. Initial Setup (One-Time Only)**
+## **📌 2. GitHub Pages (One-Time Setup)**
 
-### **Enable GitHub Pages**
-
-1. Go to GitHub repo → **Settings → Pages**
-2. Set:
-
-   * **Source:** `main`
-   * **Folder:** `/root`
-3. Save → GitHub publishes your repo at:
+- In the GitHub repository: **Settings → Pages**
+- Set **Branch** to `main` and **Folder** to `/docs` (or update examples below if you prefer publishing from root).
+- Your published URL will be:
 
 ```
-https://<username>.github.io/<repo>/
+https://<your-username>.github.io/<repo>/
 ```
 
-Example:
-
-```
-https://phaneendrareddyg.github.io/helm/
-```
+Replace `<your-username>` and `<repo>` with your GitHub username and repository name.
 
 ---
 
 ## **📌 3. Package a Chart (Every New Version)**
 
-Go inside your Helm repo:
+- From the repository root:
 
-```bash
+```powershell
 cd nginx-app
 helm package .
 ```
 
-This generates:
+- Move the generated package into the `docs/` folder:
 
-```
-nginx-app-0.3.0.tgz
-```
-
-Move it to repo root:
-
-```bash
-mv nginx-app-0.3.0.tgz ..
-cd ..
+```powershell
+Move-Item .\nginx-app-*.tgz ..\docs\
 ```
 
 ---
 
 ## **📌 4. Update Helm Repository Index**
 
-Run:
+- From repository root (recommended explicit path):
 
-```bash
-helm repo index . --url https://phaneendrareddyg.github.io/helm
+```powershell
+helm repo index docs --url https://<your-username>.github.io/<repo>
 ```
 
-This updates/creates:
+- Or change into `docs/` and run:
 
+```powershell
+cd docs
+helm repo index . --url https://<your-username>.github.io/<repo>
 ```
-index.yaml
-```
 
-Commit & push:
+---
 
-```bash
-git add .
-git commit -m "Add version 0.3.0"
+## **📌 5. Commit & Push**
+
+- From repository root:
+
+```powershell
+git add docs/*
+git commit -m "chore(release): add nginx-app x.y.z"
 git push
 ```
 
 ---
 
-## **📌 5. Verify Repository**
+## **📌 6. Verify Repository**
 
-```bash
-curl https://phaneendrareddyg.github.io/helm/index.yaml
+- Check that `index.yaml` is reachable:
+
+```powershell
+curl https://<your-username>.github.io/<repo>/index.yaml
 ```
 
-OR
+- Or add the repo locally with Helm and search:
 
-```bash
-helm repo add myrepo https://phaneendrareddyg.github.io/helm
+```powershell
+helm repo add myrepo https://<your-username>.github.io/<repo>
 helm search repo myrepo
 ```
 
 ---
 
-## **📌 6. Updating to a New Chart Version**
+## **📌 7. Updating to a New Chart Version (Workflow)**
 
-### **Step 1 — Update Chart.yaml**
+1. Update `version:` in `nginx-app/Chart.yaml`.
+2. Package the chart:
 
-Inside `nginx-app/Chart.yaml`
-
-```yaml
-version: 0.3.0
-appVersion: "1.26.0"
+```powershell
+cd nginx-app
+helm package .
 ```
 
-### **Step 2 — Package the chart**
+3. Move package to `docs/` and update index:
 
-```bash
-helm package nginx-app/
+```powershell
+Move-Item .\nginx-app-*.tgz ..\docs\
+helm repo index docs --url https://<your-username>.github.io/<repo>
 ```
 
-### **Step 3 — Update index**
+4. Commit and push:
 
-```bash
-helm repo index . --url https://phaneendrareddyg.github.io/helm
-```
-
-### **Step 4 — Commit & push**
-
-```bash
-git add .
-git commit -m "Release nginx-app 0.3.0"
+```powershell
+git add docs/*
+git commit -m "release: nginx-app x.y.z"
 git push
 ```
 
 ---
 
-## **📌 7. Use the Chart in ArgoCD**
+## **📌 8. Use the Chart in ArgoCD**
 
-Example ArgoCD Application:
+Example ArgoCD Application (replace placeholders):
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -153,19 +138,15 @@ metadata:
   namespace: argocd
 spec:
   project: default
-
   source:
-    repoURL: https://phaneendrareddyg.github.io/helm
+    repoURL: https://<your-username>.github.io/<repo>
     chart: nginx-app
     targetRevision: "0.3.0"
-
     helm:
       releaseName: nginx-app
-
   destination:
     server: https://kubernetes.default.svc
     namespace: nginx-helm
-
   syncPolicy:
     automated:
       prune: true
@@ -174,38 +155,15 @@ spec:
 
 ---
 
-## **📌 8. Common Errors & Fixes**
+## **📌 9. Common Errors & Fixes**
 
-### **❌ index.yaml not found (404)**
+- **index.yaml 404**: Ensure `docs/index.yaml` and the chart `*.tgz` files are present in the `docs/` folder and Pages is configured to publish `/docs` from `main`.
+- **Chart.yaml missing**: Make sure your chart directory contains `Chart.yaml` and `templates/`. Run:
 
-Your repo folder must contain:
-
-```
-index.yaml
-nginx-app-0.x.x.tgz
-```
-
-### **❌ Chart.yaml file is missing**
-
-You packaged incorrectly — ensure directory structure:
-
-```
-nginx-app/
-    Chart.yaml
-    templates/
-```
-
-Run:
-
-```bash
+```powershell
 helm lint nginx-app
 ```
 
-### **❌ ArgoCD cannot load chart**
+- **ArgoCD cannot load chart**: Re-run `helm repo index docs --url https://<your-username>.github.io/<repo>`, commit `docs/index.yaml`, and push.
 
-Fix by updating index file:
-
-```bash
-helm repo index . --url https://phaneendrareddyg.github.io/helm
-```
 
